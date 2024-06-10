@@ -3,15 +3,19 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Validation\Rule;
+use App\Traits\GeneralTrait;
 class StoreAdminRequest extends FormRequest
 {
+    use GeneralTrait;
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
+    
     {
-        return false;
+     
+        return true;
     }
 
     /**
@@ -21,8 +25,8 @@ class StoreAdminRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+          return $this->reqValidation('admin','required' );
+        
+      
     }
 }

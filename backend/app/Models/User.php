@@ -18,10 +18,21 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var array<int, string>
      */
+
+     public function getImageAttribute($value)
+    {
+        return $value ? asset($value) : null;
+    }
     protected $fillable = [
         'name',
         'email',
         'password',
+        'image',
+        'phone',
+        'address',
+        'active',
+        'banned',
+        
     ];
 
     /**
@@ -39,12 +50,16 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var array<string, string>
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    // protected $casts = [
+    //     'email_verified_at' => 'datetime',
+    // ];
 
 
-
+     /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -60,3 +75,7 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 }
+
+
+ 
+        

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateAttributeRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class UpdateAttributeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +22,11 @@ class UpdateAttributeRequest extends FormRequest
      */
     public function rules(): array
     {
+        $attributeId = $this->route('attribute');
         return [
-            //
+            'name' => ['required','string','regex:/^[a-zA-Z\s]+$/','max:255','min:3',
+            Rule::unique('categories', 'name')->ignore( $attributeId),]
+            
         ];
     }
 }

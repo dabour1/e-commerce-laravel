@@ -8,4 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'name',
+        'description',
+        'price',
+        'image',
+        'stock',
+    ];
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class);
+    }
+
+     
+    public function attributes()
+    {
+        return $this->belongsToMany(Attribute::class)->withPivot('value');
+    }
 }

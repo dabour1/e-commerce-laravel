@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Admin;
 use App\Models\Cart;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -37,7 +38,7 @@ class CartPolicy
      */
     public function update(User $user, Cart $cart): bool
     {
-        //
+        return $user->id==$cart->user_id || $user instanceof Admin;   
     }
 
     /**
@@ -45,7 +46,12 @@ class CartPolicy
      */
     public function delete(User $user, Cart $cart): bool
     {
-        //
+        return $user->id==$cart->user_id  || $user instanceof Admin;
+    }
+
+    public function destroyAllCartItems($authUser, Cart $cart): bool
+    {
+        return $authUser->id == $cart->user_id || $authUser instanceof Admin;
     }
 
     /**

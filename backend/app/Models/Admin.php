@@ -12,7 +12,18 @@ class Admin extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    // protected $appends = ['image_url'];
 
+    // public function getImageUrlAttribute()
+    // {
+    //     return url('storage/images/' . $this->image);
+    // }
+
+
+    public function getImageAttribute($value)
+    {
+        return $value ? asset($value) : null;
+    }
     protected $fillable = [
         'name',
         'email',
@@ -20,7 +31,6 @@ class Admin extends Authenticatable implements JWTSubject
         'image',
         'phone',
         'address',
-        
     ];
 
 

@@ -23,6 +23,13 @@ class DatabaseSeeder extends Seeder
         AdminSeeder::class,
         UserSeeder::class,
             CartSeeder::class,
+            // CategoryProductSeeder::class,
+            // ProductAttributeSeeder::class,
+            ProductSeeder::class,
+            CategorySeeder::class,
+            AttributeSeeder::class,
+
+          
             
        
     ]);

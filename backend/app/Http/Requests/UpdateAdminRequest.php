@@ -1,17 +1,18 @@
 <?php
 
 namespace App\Http\Requests;
-
+use App\Traits\GeneralTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateAdminRequest extends FormRequest
 {
+    use GeneralTrait;
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +22,6 @@ class UpdateAdminRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+        return $this->reqValidation('admin','sometimes',$this->route('admin') );
     }
 }

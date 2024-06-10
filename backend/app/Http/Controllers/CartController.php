@@ -5,62 +5,96 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Http\Requests\StoreCartRequest;
 use App\Http\Requests\UpdateCartRequest;
+use App\Http\Resources\CartResource;
+use App\Models\Product;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class CartController extends Controller
+
 {
     /**
      * Display a listing of the resource.
      */
+    public function __construct()
+    {
+        // $this->middleware('auth:api');
+        
+    }
     public function index()
     {
-        //
+        $currntUser = auth()->user();
+       $userCartItems= Cart::where('user_id' , $currntUser->id)->get();
+       return  CartResource::collection($userCartItems);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreCartRequest $request)
-    {
-        //
+    {   
+        $currntUser = auth()->user();
+        $validatedData=$request->validated();
+        $validatedData['user_id']=$currntUser->id;
+
+        if (Cart::where([
+            'product_id' => $validatedData['product_id'],
+            'user_id' => $currntUser->id,
+          ])->exists()) {
+            return response()->json(['error' => 'This product is already in your cart'],403 );
+          } 
+
+        $cart = Cart::create($validatedData);
+        return response()->json(new CartResource( $cart), 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Cart $cart)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Cart $cart)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateCartRequest $request, Cart $cart)
+
     {
-        //
+        $this->authorize('update',$cart);
+         $stockValidation= $this->checkStock($request,$cart->product_id);
+        if(!$stockValidation){
+            return response()->json(['error' => 'The stock is Lowar than  cart quantity'],403 );
+            }
+        $cart->update($request->validated());
+        return response()->json(new CartResource( $cart), 200);
+
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+  
     public function destroy(Cart $cart)
     {
-        //
+        $this->authorize('delete',$cart);
+         $cart->delete();
+         return response()->json(['message' =>'Done'], 204);
     }
+
+    public function destroyAllCartItems(int $id)
+    {
+      $user= User::findOrFail($id);
+      $this->authorize('destroyAllCartItems',$user);
+        $deleted = Cart::where('user_id', $id)->delete();
+        if ($deleted) {
+            return response()->json(['message' => 'All cart items deleted successfully'], 200);
+        } else {
+            return response()->json(['error' => 'No cart items found for this user'], 404);
+        }   
+    }
+ 
+ 
+  
+    private function checkStock($request,$product_id){
+    $stock =Product::find($product_id)->stock;
+    if($stock < $request['quantity']){
+        return false;
+    } 
+     return  true;
+   }
+ 
 }
