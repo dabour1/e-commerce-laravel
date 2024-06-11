@@ -13,10 +13,10 @@ class AuthController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => ['login']]);
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:api', ['except' => ['login']]);
+    // }
 
     /**
      * Get a JWT via given credentials.
@@ -85,10 +85,12 @@ class AuthController extends Controller
     protected function respondWithToken($token)
     {
         return response()->json([
-            'access_token' => $token,
+            'token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-            'id' => auth( $this->role)->user()->id
+            'id' => auth( $this->role)->user()->id,
+            'role'=>$this->role
+
         ]);
     }
 }

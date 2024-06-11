@@ -29,13 +29,10 @@ class AdminController extends Controller
         $validatedData = $request->validated();
 
         if($request->hasfile('image')){
-            $validatedData['image'] = $this->uploadImage($request);
+            $validatedData['image'] = $this->uploadImage($request,"admins");
         }
 
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('public/images');
-            $validatedData['image'] = $imagePath;
-        }
+        
         $validatedData['password'] = bcrypt($validatedData['password']);
         $admin = Admin::create($validatedData);
         return response()->json(['message' => 'Admin created successfully', 'admin' => new AdminResource($admin) ], 201);
@@ -57,7 +54,7 @@ class AdminController extends Controller
         $validatedData =$request->validated();
         
             if($request->hasfile('image')){
-                $validatedData['image'] = $this->uploadImage($request,$admin);
+                $validatedData['image'] = $this->uploadImage($request,"admins",$admin);
             }
         
         $admin->update( $validatedData);
@@ -70,7 +67,7 @@ class AdminController extends Controller
     public function destroy(Admin $admin)
     {
         if ($admin->image){
-            Storage::delete($admin->image);}
+            Storage::delete('public/images/admins/'.$admin->image);}
             $admin->delete();
     }
 }

@@ -38,13 +38,13 @@ Route::group([
 });
 
 
-
+ 
 
 
 // I used guards to filter unauthenticated and some unauthorized requests,
 // and I overrode some routes declared in "Route::apiResource" to avoid verbose code.
   
-        Route::group(['middleware' => ['auth:admin']], function () {
+    Route::group(['middleware' => ['auth:admin']], function () {
         Route::apiResource('admins', AdminController::class);
         Route::apiResource('categories', CategoryController::class);
         Route::apiResource('attributes', AttributeController::class);
@@ -52,18 +52,26 @@ Route::group([
         Route::put('products/{product}', [ProductController::class, 'update'])->name('products.update');
         Route::delete('products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
     });
+
+    Route::group(['middleware' => ['auth:user']], function () {
+        Route::apiResource('carts', CartController::class);
+    });
     
   
     Route::group(['middleware' => ['multiAuth'],], function ( ) {
         Route::apiResource('users', UserController::class);
-        Route::apiResource('carts', CartController::class);
-        Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
-        Route::get('products', [ProductController::class, 'index'])->name('products.index');
         Route::get('admins', [AdminController::class, 'index'])->name('admins.index');
-        Route::get('products/{product}', [ProductController::class, 'show'])->name('products.show');
-        Route::get('categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
         Route::get('admins/{admin}', [AdminController::class, 'show'])->name('admins.show');
            
         });
 
-   
+      
+    Route::post('users', [UserController::class,'store'])->name('users.store');
+    Route::get('products/{product}', [ProductController::class, 'show'])->name('products.show');
+    Route::get('products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
+    Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::post('/products/filter', [ProductController::class, 'filter']);
+    Route::post('/products/sortedProducts', [ProductController::class, 'sortedProducts']);
+
+    

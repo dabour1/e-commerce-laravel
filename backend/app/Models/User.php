@@ -19,9 +19,11 @@ class User extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
 
-     public function getImageAttribute($value)
+     protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute()
     {
-        return $value ? asset($value) : null;
+        return url('storage/images/users/' . $this->image);
     }
     protected $fillable = [
         'name',

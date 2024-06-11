@@ -28,9 +28,10 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $validatedData = $request->validated();
-
+          
         if($request->hasfile('image')){
-            $validatedData['image'] = $this->uploadImage($request);
+           
+            $validatedData['image'] = $this->uploadImage($request,"users");
         }
         $validatedData['password'] = bcrypt($validatedData['password']);
          $user=User::create($validatedData);
@@ -52,9 +53,10 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
+        $this->authorize('update', $user);
         $validatedData =$request->validated();
         if($request->hasfile('image')){
-            $validatedData['image'] = $this->uploadImage($request,$user);
+            $validatedData['image'] = $this->uploadImage($request,"users",$user);
         }
         $user->update( $validatedData);
     return response()->json(['message' => 'User updated successfully', 'user' => new UserResource($user)], 201);
@@ -65,8 +67,9 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        $this->authorize('delete', $user);
         if ($user->image){
-            Storage::delete($user->image);}
+            Storage::delete('public/images/users/'.$user->image);}
             $user->delete();
     }
 }

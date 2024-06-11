@@ -8,7 +8,7 @@ use App\Http\Requests\UpdateCartRequest;
 use App\Http\Resources\CartResource;
 use App\Models\Product;
 use App\Models\User;
-use Illuminate\Http\Request;
+ 
 
 class CartController extends Controller
 

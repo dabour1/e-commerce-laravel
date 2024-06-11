@@ -24,14 +24,14 @@ class StoreProductRequest extends FormRequest
         return [
             'name' => 'required|string|regex:/^[a-zA-Z\s]+$/|max:255|min:3',
             'description' => 'nullable|string',
-            'price' => 'required|numeric',
+            'price' => 'required|numeric|max_digits:8|min:10',
             'image' => 'sometimes|image|mimes:jpg,png|max:2048',
-            'stock' => 'required|integer',
+            'stock' => 'required|integer|min:1',
             'categories' => 'required|array',
             'categories.*' => 'integer|exists:categories,id',
             'attributes' => 'array',
             'attributes.*.id' => 'required|integer|exists:attributes,id',
-            'attributes.*.value' => 'required|string|regex:/^[a-zA-Z\s]+$/|max:255|min:3',
+            'attributes.*.value' => 'required|string|max:255|min:3',
         ];
     }
 }

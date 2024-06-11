@@ -11,18 +11,14 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class Admin extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
-
-    // protected $appends = ['image_url'];
-
-    // public function getImageUrlAttribute()
-    // {
-    //     return url('storage/images/' . $this->image);
-    // }
+ 
 
 
-    public function getImageAttribute($value)
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute()
     {
-        return $value ? asset($value) : null;
+        return url('storage/images/admins/' . $this->image);
     }
     protected $fillable = [
         'name',

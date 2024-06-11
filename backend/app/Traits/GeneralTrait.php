@@ -6,19 +6,19 @@ use Illuminate\Validation\Rule;
 
 trait GeneralTrait {
 
-    public function uploadImage($request,$model=null){
-        $imagePath="";
+    public function uploadImage($request,$folder,$model=null){
+        
         if ($model!=null and $model->image) {
-            
-            Storage::delete($model->image);
+             
+            Storage::delete("public/images/$folder/$model->image");
             $imageName = $model->id.".". $request->file('image')->getClientOriginalExtension();
              
-            $imagePath = $request->file('image')->storeAs('public/images', $imageName);
+              $request->file('image')->storeAs("public/images/$folder", $imageName);
         }else{
             $imageName = $request->file('image')->getClientOriginalName();
-            $imagePath = $request->file('image')->store('public/images');
+              $request->file('image')->storeAs("public/images/$folder",$imageName);
         }
-        return   $imagePath ;
+        return   $imageName ;
     }
     public function reqValidation($user='', $priority='required',$user_id='' ){
         

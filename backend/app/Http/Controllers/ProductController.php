@@ -9,6 +9,8 @@ use App\Http\Resources\ProductResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Traits\GeneralTrait;
+use Illuminate\Http\Request;
+
 class ProductController extends Controller
 {
     use GeneralTrait;
@@ -17,7 +19,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return ProductResource::collection(Product::all());
+        
+    return ProductResource::collection(Product::where('stock', '>', 0)->get());
     }
 
     
@@ -30,7 +33,7 @@ class ProductController extends Controller
         $validatedData = $request->validated();
 
         if ($request->hasFile('image')) {
-            $validatedData['image'] = $this->uploadImage($request);
+            $validatedData['image'] = $this->uploadImage($request,"products");
         }
         DB::beginTransaction();
         try{
@@ -66,7 +69,7 @@ class ProductController extends Controller
     {
         $validatedData =$request->validated();
         if($request->hasfile('image')){
-            $validatedData['image'] = $this->uploadImage($request,$product);
+            $validatedData['image'] = $this->uploadImage($request,"products",$product);
         }
         DB::beginTransaction();
         try{
@@ -88,24 +91,44 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         if($product->image){
-            Storage::delete($product->image);
+            Storage::delete('public/images/products/'.$product->image);
            }
            $product->delete();
            return response()->json(null, 204);
     }
 
-    // public function uploadImage($request,$product=null){
-    //     $imagePath="";
-    //     if ($product!=null and $product->image) {
-    //         Storage::delete($product->image);
-    //         $imageName = $product->id. $request->file('image')->getClientOriginalExtension();
-    //         $request->file('image')->storeAs('public/images', $imageName);
-    //     }else{
-    //         $imageName = $product->id. $request->file('image')->getClientOriginalName();
-    //         $request->file('image')->store('public/images');
-    //     }
-    //     return  $imageName;
-    // }
+    public function filter(Request $request)
+   {
+       $request->validate([
+           'query' => 'required|string|min:1', 
+       ]);
+       
+       $query = $request['query'];  
+       
+       $products = Product::where('name', 'LIKE', "%{$query}%")->get();  
+
+       return response()->json($products);
+   }
+   
+   public function sortedProducts(Request $request)
+{
+    $request->validate([ 
+        'sort' => 'required|string|in:newest,highest_price,lowest_price',
+    ]);
+
+    $sortOptions = [
+        'newest' => ['created_at', 'desc'],
+        'highest_price' => ['price', 'desc'],
+        'lowest_price' => ['price', 'asc']
+    ];
+
+    $sort = $sortOptions[$request->input('sort')];
+    $products = Product::where('stock', '>', 0)
+                        ->orderBy($sort[0], $sort[1])
+                        ->get();
+
+    return ProductResource::collection($products);
+}
 
     public function attachCategories($product,$validatedData){
         if (isset($validatedData['categories'])){

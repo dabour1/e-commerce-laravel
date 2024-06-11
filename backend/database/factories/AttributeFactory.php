@@ -16,9 +16,15 @@ class AttributeFactory extends Factory
      */
     public function definition(): array
     {
+        $attributes = [
+            'Color', 'Size', 'Material', 'Brand', 'Weight',
+            'Style', 'Pattern', 'Capacity', 'Fit', 'Length',
+            'Width', 'Height', 'Voltage', 'Wattage', 'Features',
+            'Ingredients', 'Compatibility', 'Warranty', 'Model'
+          ];
         return [
-
-            'name' => $this->faker->name(),
+                'name' => $this->faker->randomElement($attributes),
+             
           
         ];
     }
