@@ -1,4 +1,4 @@
-"I have completed the required steps in the PDF file.
+I have completed the required steps in the PDF file.
 
 I used JWT for authentication.
 
@@ -18,4 +18,4 @@ The code can be improved both in the front end and the back end, and some enhanc
 I look forward to receiving your comments and guidance eagerly to refine my skills and improve my performance.
 
 
-Best regards."
+Best regards.
